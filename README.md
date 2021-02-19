@@ -1,6 +1,7 @@
 # Android_OpenStreeMap_CzechRepublic
 
 Android demo with OpenStreetMap showing 14 regions of CzechRep as folows
+
 Středočeský kraj, Praha, Jihočeský kraj, Kraj Vysočina, Plzeňský kraj, Karlovarský kraj, Ústecký kraj, Liberecký kraj, Hradecký kraj, Pardubický kraj, Olomoucký kraj, Moravskoslezský kraj, Jihomoravský kraj, Zlínský kraj
 
 Using 
