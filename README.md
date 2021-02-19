@@ -19,3 +19,4 @@ Note : geoJSON data are stores in /app/assets
     
     
 screenshot
+http://www.vancura.cz/programing/Android/Demo/OpenStreetMap/1.png
