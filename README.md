@@ -11,15 +11,19 @@ Using
 
 Data : geoJSON data are stores in /app/assets
 
-    1.Original folder - downloaded from http://polygons.openstreetmap.fr/index.py - insert Openstreet map Id for object you are looking for
-            files has  x10-thousands points for each vector
-            
-    2.OriginalRaw folder - ad1 removed header
+    1.Original folder - original data - how to ge it
+            a] find your object at https://www.openstreetmap.org
+            b] copy its relation ID (as example 438344)
+            c] past it to http://polygons.openstreetmap.fr/index.py 
+            d] download GeoJSON file
+            such files for my above regions has x10-thousands points for each vector
+         
+    2.OriginalRaw folder - ad1 with removed header
     
     3.Reduced folder - ad2 passed into ReduceJSON method to reduce size
                      once reduced - files has x1-thousands points for each vector
              
-    4.ReducedRaw folder - ad3 removed header
+    4.ReducedRaw folder - ad3 with removed header
     
     
 screenshot
