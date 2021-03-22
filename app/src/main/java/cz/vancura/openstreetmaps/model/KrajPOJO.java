@@ -1,4 +1,4 @@
-package cz.vancura.openstreetmaps.Model;
+package cz.vancura.openstreetmaps.model;
 
 public class KrajPOJO {
 

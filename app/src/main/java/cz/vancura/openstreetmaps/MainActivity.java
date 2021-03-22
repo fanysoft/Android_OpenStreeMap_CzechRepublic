@@ -1,30 +1,19 @@
 package cz.vancura.openstreetmaps;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.kml.Style;
-import org.osmdroid.bonuspack.utils.DouglasPeuckerReducer;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.PointReducer;
@@ -34,19 +23,17 @@ import org.osmdroid.views.overlay.FolderOverlay;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.osmdroid.bonuspack.kml.KmlDocument;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.MapEventsOverlay;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.Polygon;
 
 
-import cz.vancura.openstreetmaps.Model.KrajPOJO;
+import cz.vancura.openstreetmaps.model.KrajPOJO;
 
 import static org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER;
 
@@ -68,19 +55,10 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
         Log.d(TAG, "started - onCreate");
 
 
-        //handle permissions first, before map is created. not depicted here
-        Log.d(TAG, "Checking permissions ..");
-        requestPermissionsIfNecessary(new String[] {
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        });
-
-
         ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // COlor Array init
+        // Color Array init
         InitColorArray();
 
         // map init
@@ -174,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
             byte[] buffer = new byte[size];
             jsonStream.read(buffer);
             jsonStream.close();
-            jsonString = new String(buffer,"UTF-8");
+            jsonString = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             Log.e(TAG, "ShowKrajFolderOverlay ERROR " + ex.getLocalizedMessage());
             ex.printStackTrace();
@@ -219,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
             byte[] buffer = new byte[size];
             jsonStream.read(buffer);
             jsonStream.close();
-            jsonString = new String(buffer,"UTF-8");
+            jsonString = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             Log.e(TAG, "ReduceJSON file ERROR " + ex.getLocalizedMessage() + " " + ex.toString());
             ex.printStackTrace();
@@ -292,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
             byte[] buffer = new byte[size];
             jsonStream.read(buffer);
             jsonStream.close();
-            jsonString = new String(buffer,"UTF-8");
+            jsonString = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             Log.e(TAG, "ShowKrajPolygon ERROR " + ex.getLocalizedMessage() + " " + ex.toString());
             ex.printStackTrace();
@@ -386,45 +364,6 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 
-    // From OSMdroid into code
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-
-        Log.d(TAG, "onRequestPermissionsResult - callback");
-
-        for (int i = 0; i < grantResults.length; i++) {
-            permissionsToRequest.add(permissions[i]);
-        }
-        if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(this, permissionsToRequest.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
-    // From OSMdroid into code
-    private void requestPermissionsIfNecessary(String[] permissions) {
-
-        Log.d(TAG, "requestPermissionsIfNecessary");
-
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-
-        for (String permission : permissions) {
-            Log.d(TAG, "requestPermissionsIfNecessary " + permission);
-
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "requestPermissionsIfNecessary " + permission + " not granted - will request");
-                // Permission is not granted
-                permissionsToRequest.add(permission);
-            }
-        }
-        if (permissionsToRequest.size() > 0) {
-            requestPermissions(permissionsToRequest.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
-        }else{
-            Log.d(TAG, "requestPermissionsIfNecessary - all granted");
-        }
-    }
-
 
     // OnClick short
     @Override
@@ -447,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
     /** KML coordinates are: lon,lat{,alt} tuples separated by separators (space, tab, cr). */
     private static ArrayList<GeoPoint> parseKmlCoordinates(String input){
         Log.d(TAG, "parseKmlCoordinates");
-        LinkedList<GeoPoint> tmpCoords = new LinkedList<GeoPoint>();
+        LinkedList<GeoPoint> tmpCoords = new LinkedList<>();
         int i = 0;
         int tupleStart = 0;
         int length = input.length();
@@ -476,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
             }
             i++;
         }
-        ArrayList<GeoPoint> coordinates = new ArrayList<GeoPoint>(tmpCoords.size());
+        ArrayList<GeoPoint> coordinates = new ArrayList<>(tmpCoords.size());
         coordinates.addAll(tmpCoords);
         return coordinates;
     }
@@ -496,9 +435,7 @@ public class MainActivity extends AppCompatActivity implements MapEventsReceiver
                 double alt = Double.parseDouble(input.substring(end2+1, input.length()));
                 return new GeoPoint(lat, lon, alt);
             }
-        } catch (NumberFormatException e) {
-            return null;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
             return null;
         }
     }
